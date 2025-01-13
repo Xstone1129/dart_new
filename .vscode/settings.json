@@ -31,4 +31,5 @@
             "source.organizeImports.ruff": "explicit",
         }
     },
+    "cmake.sourceDirectory": "/home/xu/ACE/dart/src/auto_aim_interfaces",
 }
