@@ -1,0 +1,12 @@
+using_camera: true #false：将会开启测试模式
+using_serial_port: true
+using_record : false
+camera: hik
+
+odom2camera:
+  xyz: "\"0.0 0.0  0.00\""
+  rpy: "\"0.0  0.0  0.0\""
+
+detector_log_level: DEBUG
+tracker_log_level: INFO
+serial_log_level: INFO

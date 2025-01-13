@@ -1,0 +1,9 @@
+/rm_auto_record:
+  ros__parameters:
+    uri: "/home/ace/as/src/rm_auto_record"
+    topic_name:
+    - "/image_raw/compressed"
+    - "/camera_info"
+    topic_type:
+    - "sensor_msgs/msg/CompressedImage"
+    - "sensor_msgs/msg/CameraInfo"

@@ -1,0 +1,6 @@
+install/
+log/
+build/
+
+*.mp4
+*.avi

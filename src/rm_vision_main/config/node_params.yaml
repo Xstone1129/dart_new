@@ -1,0 +1,35 @@
+/camera_node:
+  ros__parameters:
+    camera_info_url: package://rm_vision_main/config/camera_info.yaml
+    exposure_time: 2500
+    gain: 8.0
+
+/rm_serial_driver:
+  ros__parameters:
+    timestamp_offset: 0.001
+    device_name: /dev/ttyACM0
+    baud_rate: 115200
+    flow_control: none
+    parity: none
+    stop_bits: "1"
+    is_hero: false
+
+/detect_node:
+  ros__parameters:
+    binary_thres: 140
+    compensation: 1.0
+
+    #debug
+    debug: true
+
+
+
+
+
+
+
+
+
+
+
+
