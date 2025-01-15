@@ -106,9 +106,8 @@ void RMSerialDriver::receiveData()
         data.insert(data.begin(), header[0]);
         ReceivePacket packet = fromVector(data);
         if (packet.checksum == 0xED) {
-          number_ = packet.number;
-          mode_ = packet.mode;
-
+          setParam(rclcpp::Parameter("mode", packet.mode));
+          setParam(rclcpp::Parameter("number", packet.number));
           // std::cout << "Received packet: number= " << number_ << "mode_= " <<mode_
           //           << std::endl;
         } else {
@@ -133,11 +132,10 @@ void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Target::SharedPtr 
     packet.yaw_error = msg->yaw_error;
     packet.is_detected = msg->is_detected;
     std::vector<uint8_t> data = toVector(packet);
-    std::cout<<"send_yaw: "<<packet.yaw_error<<std::endl;
+    std::cout << "send_yaw: " << packet.yaw_error << std::endl;
     //发送
-    if (mode_) {
-      serial_driver_->port()->send(data);
-    }
+
+    serial_driver_->port()->send(data);
 
   } catch (const std::exception & ex) {
     RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());

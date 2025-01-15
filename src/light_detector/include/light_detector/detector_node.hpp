@@ -86,6 +86,21 @@ namespace rm_auto_light
         void KalmanUpdate();
 
 
-        float compensation;
+        enum class MODE
+        {
+            NOTHING = 0,
+            AUTO_AIM,
+        };
+        enum class NUMBER
+        {
+            ONE=1,
+            TWO,
+            THREE,
+            FOUR,
+        };
+        
+        int mode_;
+        int number_;
+        float compensation_;
     };
 } // namespace rm_auto_light

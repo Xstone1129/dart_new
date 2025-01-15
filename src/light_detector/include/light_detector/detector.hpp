@@ -28,7 +28,8 @@ namespace rm_auto_light
     public:
         // 构造函数
         Detector(const int &bin_thres);
-
+        // 参数设置
+        int binary_thres; // 二值化阈值
         // 主要检测功能
         Light detect(const cv::Mat &input);
         // 图像数据
@@ -45,7 +46,6 @@ namespace rm_auto_light
         void drawLight(const Light &light);
 
         bool isWhiteLight(const int &sum_r, const int &sum_g, const int &sum_b);
-        // 参数设置
-        int binary_thres; // 二值化阈值
+
     };
 } // namespace rm_auto_light

@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/xu/ACE/dart/install/rm_vision_main/include/**",
+        "/home/xu/ACE/dart/install/rm_serial_driver/include/**",
+        "/home/xu/ACE/dart/install/rm_auto_record/include/**",
+        "/home/xu/ACE/dart/install/light_detector/include/**",
+        "/home/xu/ACE/dart/install/auto_aim_interfaces/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/xu/ACE/dart/src/img_test/include/**",
+        "/home/xu/ACE/dart/src/light_detector/include/**",
+        "/home/xu/ACE/dart/src/rm_auto_record/include/**",
+        "/home/xu/ACE/dart/src/rm_serial_driver/include/**",
+        "/home/xu/ACE/dart/src/rm_vision_main/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

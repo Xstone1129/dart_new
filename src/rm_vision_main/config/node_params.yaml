@@ -16,9 +16,13 @@
 
 /detect_node:
   ros__parameters:
-    binary_thres: 140
-    compensation: 1.0
-
+    binary_thres: 80
+    compensation_1: 1.0 
+    compensation_2: 1.0
+    compensation_3: 1.0
+    compensation_4: 1.0 
+    mode: 0
+    dart_number: 0
     #debug
     debug: true
 

@@ -12,7 +12,7 @@
 
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "[cpp]": {
-        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
         "editor.formatOnSave": true
     },
 
