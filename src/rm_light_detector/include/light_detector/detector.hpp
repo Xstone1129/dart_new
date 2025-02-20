@@ -3,6 +3,7 @@
 // OpenCV相关头文件
 #include </usr/include/opencv4/opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/types.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
@@ -40,12 +41,11 @@ namespace rm_auto_light
     private:
         // 图像预处理
         cv::Mat preprocessImage(const cv::Mat &input);
-        double calculateGreenConfidence(const cv::Mat &roi);
+        double calculateGreenConfidence(const cv::Mat &img,const std::vector<cv::Point> &contour);
         Light findGreenLight(const cv::Mat &img, const cv::Mat &binary_image);
 
         void drawLight(const Light &light);
 
         bool isWhiteLight(const int &sum_r, const int &sum_g, const int &sum_b);
-
     };
 } // namespace rm_auto_light

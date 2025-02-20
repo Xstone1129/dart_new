@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(light_detector)
+project(rm_light_detector)
 
 ## Use C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -44,7 +44,7 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 # Register the component
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN rm_auto_light::DetectorNode
-  EXECUTABLE detect_node
+  EXECUTABLE light_detector_node
 )
 
 #############

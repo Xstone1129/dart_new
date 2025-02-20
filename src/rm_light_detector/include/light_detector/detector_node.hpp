@@ -102,5 +102,6 @@ namespace rm_auto_light
         int mode_;
         int number_;
         float compensation_;
+        std::vector<int> compensations_;
     };
 } // namespace rm_auto_light

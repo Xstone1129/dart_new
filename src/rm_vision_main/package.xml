@@ -15,7 +15,7 @@
   <depend>sensor_msgs</depend>
   <depend>OpenCV</depend>
   <depend>geometry_msgs</depend>
-  <depend>rm_exchanger_detector</depend>
+  <depend>rm_light_detector</depend>
   <depend>rm_serial_driver</depend>
 
   <test_depend>ament_lint_auto</test_depend>

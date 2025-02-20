@@ -13,8 +13,8 @@ namespace rm_serial_driver
 struct ReceivePacket
 {
   uint8_t header = 0xFF;
-  uint8_t number;
   uint8_t mode;
+  uint8_t number;
   uint8_t checksum = 0xED;
 } __attribute__((packed));
 

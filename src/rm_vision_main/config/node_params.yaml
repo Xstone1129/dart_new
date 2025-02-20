@@ -14,13 +14,13 @@
     stop_bits: "1"
     is_hero: false
 
-/detect_node:
+/detector_node:
   ros__parameters:
     binary_thres: 80
-    compensation_1: 1.0 
-    compensation_2: 1.0
-    compensation_3: 1.0
-    compensation_4: 1.0 
+    compensation_1: 0
+    compensation_2: 0
+    compensation_3: 0
+    compensation_4: 0
     mode: 0
     dart_number: 0
     #debug

@@ -37,6 +37,7 @@ namespace rm_auto_light
         std::string time_str = oss.str();
 
         RCLCPP_INFO(this->get_logger(), "Starting DetectorNode!");
+        compensations_.reserve(4);
         detector_ = initDetector();
         target_pub_ = this->create_publisher<auto_aim_interfaces::msg::Target>("/detector/target", rclcpp::SensorDataQoS());
 
@@ -44,19 +45,21 @@ namespace rm_auto_light
         debug_ = this->declare_parameter("debug", true);
 
         if (debug_)
-            {
-                createDebugPublishers();
-            }
+        {
+            createDebugPublishers();
+        }
 
         cam_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>("/camera_info",
                                                                                 rclcpp::SensorDataQoS(),
                                                                                 [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info)
                                                                                 {
                                                                                     cam_center_ = cv::Point2f(camera_info->k[2], camera_info->k[5]);
-                                                                                    cam_info_ = std::make_shared<sensor_msgs::msg::CameraInfo>(*camera_info);
+                                                                                    cam_info_ =
+                                                                                        std::make_shared<sensor_msgs::msg::CameraInfo>(*camera_info);
                                                                                     cam_info_sub_.reset();
                                                                                 });
-        img_msg_sub_ = this->create_subscription<sensor_msgs::msg::Image>("/image_raw", 10, std::bind(&DetectorNode::targetWorkCallback, this, std::placeholders::_1));
+        img_msg_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
+            "/image_raw", 10, std::bind(&DetectorNode::targetWorkCallback, this, std::placeholders::_1));
     }
 
     std::unique_ptr<Detector> DetectorNode::initDetector()
@@ -64,16 +67,19 @@ namespace rm_auto_light
         InitKalmanFilter();
         rcl_interfaces::msg::ParameterDescriptor param_desc;
         if (param_desc.integer_range.size() < 1)
-            {
-                param_desc.integer_range.resize(1);
-            }
+        {
+            param_desc.integer_range.resize(1);
+        }
         param_desc.integer_range[0].step = 1;
         param_desc.integer_range[0].from_value = 0;
         param_desc.integer_range[0].to_value = 255;
         int binary_thres = static_cast<int>(declare_parameter("binary_thres", 160, param_desc));
         mode_ = static_cast<int>(declare_parameter("mode", 0));
         number_ = static_cast<int>(declare_parameter("dart_number", 1));
-        compensation_ = static_cast<int>(declare_parameter("compensation", 0));
+        compensations_[0] = static_cast<int>(declare_parameter("compensation_1", 0));
+        compensations_[1] = static_cast<int>(declare_parameter("compensation_2", 0));
+        compensations_[2] = static_cast<int>(declare_parameter("compensation_3", 0));
+        compensations_[3] = static_cast<int>(declare_parameter("compensation_4", 0));
 
 
         auto detector = std::make_unique<Detector>(binary_thres);
@@ -83,26 +89,42 @@ namespace rm_auto_light
 
     void DetectorNode::targetWorkCallback(const sensor_msgs::msg::Image::SharedPtr img)
     {
-        // update params
-        detector_->binary_thres = get_parameter("binary_thres").as_int();
-        mode_ = get_parameter("mode").as_int();
-        number_ = get_parameter("dart_number").as_int();
-        if (number_ == static_cast<int>(NUMBER::ONE))
-            {
-                compensation_ = get_parameter("compensation_1").as_int();
-            }
-        else if (number_ == static_cast<int>(NUMBER::TWO))
-            {
-                compensation_ = get_parameter("compensation_2").as_int();
-            }
-        else if (number_ == static_cast<int>(NUMBER::THREE))
-            {
-                compensation_ = get_parameter("compensation_3").as_int();
-            }
-        else if (number_ == static_cast<int>(NUMBER::FOUR))
-            {
-                compensation_ = get_parameter("compensation_4").as_int();
-            }
+
+        try
+        {
+            // update params
+            detector_->binary_thres = get_parameter("binary_thres").as_int();
+            mode_ = get_parameter("mode").as_int();
+            number_ = get_parameter("dart_number").as_int();
+            compensations_[0] = get_parameter("compensation_1").as_int();
+            compensations_[1] = get_parameter("compensation_2").as_int();
+            compensations_[2] = get_parameter("compensation_3").as_int();
+            compensations_[3] = get_parameter("compensation_4").as_int();
+        }
+        catch (rclcpp::ParameterTypeException &ex)
+        {
+            RCLCPP_ERROR(get_logger(), "get_parameter failed");
+            throw ex;
+        }
+
+
+        // if (number_ == static_cast<int>(NUMBER::ONE))
+        // {
+        //     compensation_ = get_parameter("compensation_1").as_int();
+        // }
+        // else if (number_ == static_cast<int>(NUMBER::TWO))
+        // {
+        //     compensation_ = get_parameter("compensation_2").as_int();
+        // }
+        // else if (number_ == static_cast<int>(NUMBER::THREE))
+        // {
+        //     compensation_ = get_parameter("compensation_3").as_int();
+        // }
+        // else if (number_ == static_cast<int>(NUMBER::FOUR))
+        // {
+        //     compensation_ = get_parameter("compensation_4").as_int();
+        // }
+
 
         // 标架上面的相机是装反的
         // 0 表示上下翻转，即垂直翻转
@@ -110,29 +132,52 @@ namespace rm_auto_light
         // -1 表示同时上下和左右翻转
 
         auto light = detectLight(img);
+
+
         // populate target message
         auto_aim_interfaces::msg::Target target_msg;
+        target_msg.yaw_error = 0;
         target_msg.is_detected = light.is_detected ? 1 : 0;
-        target_msg.yaw_error = light.is_detected ? (cam_center_.y - static_cast<int>(light.center_point.y) + compensation_) : 0;
+        // std::cout << static_cast<int>(target_msg.is_detected) << std::endl;
+        // std::cout << "现在的数字是" <<number_<< std::endl;
+        if (number_ == static_cast<int>(NUMBER::ONE))
+        {
+            target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[0]) : 0;
+        }
+        else if (number_ == static_cast<int>(NUMBER::TWO))
+        {
+            target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[1]) : 0;
+        }
+        else if (number_ == static_cast<int>(NUMBER::THREE))
+        {
+            target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[2]) : 0;
+        }
+        else if (number_ == static_cast<int>(NUMBER::FOUR))
+        {
+            target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[3]) : 0;
+        }
+
+        std::cout << "send yaw :" << target_msg.yaw_error << std::endl;
 
         if (mode_ == static_cast<int>(MODE::AUTO_AIM))
-            {
-                target_pub_->publish(target_msg);
-            }
+        {
+            RCLCPP_ERROR(get_logger(), "FIRE FIRE FIRE");
+            target_pub_->publish(target_msg);
+        }
         if (debug_)
-            {
-                // 画图用于debug
+        {
+            // 画图用于debug
 
-                std::string yaw_text = "yaw: " + std::to_string(target_msg.yaw_error);
-                cv::putText(detector_->debug_image_, yaw_text, cv::Point(20, 40), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(0, 0, 255), 4);
-                cv::line(detector_->debug_image_,
-                         cv::Point(0, cam_center_.y + compensation_), // 起点
-                         cv::Point(cam_center_.x, cam_center_.y + compensation_), // 终点
-                         cv::Scalar(0, 0, 255), // 线条颜色 (红色)
-                         2); // 线条粗细
+            std::string yaw_text = "yaw: " + std::to_string(target_msg.yaw_error);
+            cv::putText(detector_->debug_image_, yaw_text, cv::Point(20, 40), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(0, 0, 255), 4);
+            // cv::line(detector_->debug_image_,
+            //          cv::Point(0, cam_center_.y + compensation_), // 起点
+            //          cv::Point(cam_center_.x, cam_center_.y + compensation_), // 终点
+            //          cv::Scalar(0, 0, 255), // 线条颜色 (红色)
+            //          2); // 线条粗细
 
-                publishDebugImages();
-            }
+            publishDebugImages();
+        }
     }
 
     // TODO：加入卡尔曼滤波
@@ -167,8 +212,7 @@ namespace rm_auto_light
     Light DetectorNode::detectLight(const sensor_msgs::msg::Image::SharedPtr img)
     {
         cv::Mat imgROI = cv_bridge::toCvShare(img, "bgr8")->image;
-
-        return detector_->detect(img_flip_);
+        return detector_->detect(imgROI);
     }
 
     void DetectorNode::createDebugPublishers()

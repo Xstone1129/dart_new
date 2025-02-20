@@ -38,7 +38,7 @@ namespace rm_auto_light
         Light(const cv::Point2f &point, bool detected, float confidence) : center_point(point), is_detected(detected), g_confidence(confidence)
         {}
 
-        bool is_detected; // 是否检测到光源
+        bool is_detected=false; // 是否检测到光源
         float g_confidence; // 绿色置信度
         cv::Rect box; // 光源的边界框
         cv::Point2f center_point; // 光源的中心点

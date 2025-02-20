@@ -7,6 +7,6 @@ odom2camera:
   xyz: "\"0.0 0.0  0.00\""
   rpy: "\"0.0  0.0  0.0\""
 
-detector_log_level: DEBUG
+detector_log_level: INFO
 tracker_log_level: INFO
 serial_log_level: INFO

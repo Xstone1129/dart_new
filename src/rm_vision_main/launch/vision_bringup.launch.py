@@ -36,7 +36,7 @@ def generate_launch_description():
             composable_node_descriptions=[
                 camera_node,
                 ComposableNode(
-                    package='light_detector',
+                    package='rm_light_detector',
                     plugin='rm_auto_light::DetectorNode',
                     name='detector_node',
                     parameters=[node_params],
@@ -53,8 +53,8 @@ def generate_launch_description():
         # 定义检测器节点
    
     detector_node = Node(            
-        package='light_detector',
-        executable='detector_node',
+        package='rm_light_detector',
+        executable='light_detector_node',
         output='both',
         emulate_tty=True,
         parameters=[node_params],
@@ -69,7 +69,7 @@ def generate_launch_description():
         emulate_tty=True,
         parameters=[node_params],
         arguments=['--ros-args', '--log-level',
-                'rm_auto_record:=DEBUG'],
+                'rm_auto_record:=INFO'],
     )  
 
     img_push_node = None
