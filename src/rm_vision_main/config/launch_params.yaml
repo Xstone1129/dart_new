@@ -1,5 +1,5 @@
 using_camera: true #false：将会开启测试模式
-using_serial_port: true
+using_serial_port: false
 using_record : false
 camera: hik
 

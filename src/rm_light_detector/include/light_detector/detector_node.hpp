@@ -56,7 +56,7 @@ namespace rm_auto_light
 
         void targetWorkCallback(const sensor_msgs::msg::Image::SharedPtr msg);
 
-        Light detectLight(const sensor_msgs::msg::Image::SharedPtr img);
+        GreenLight detectLight(const sensor_msgs::msg::Image::SharedPtr img);
 
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr img_msg_sub_; // 图像消息订阅
 

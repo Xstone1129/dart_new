@@ -1,7 +1,7 @@
 /camera_node:
   ros__parameters:
     camera_info_url: package://rm_vision_main/config/camera_info.yaml
-    exposure_time: 2500
+    exposure_time: 5000
     gain: 8.0
 
 /rm_serial_driver:
@@ -17,10 +17,12 @@
 /detector_node:
   ros__parameters:
     binary_thres: 80
-    compensation_1: 0
-    compensation_2: 0
-    compensation_3: 0
-    compensation_4: 0
+    detect_color: 0
+    #偏左加大，偏右减小
+    compensation_1: 60
+    compensation_2: 60
+    compensation_3: 50
+    compensation_4: 60
     mode: 0
     dart_number: 0
     #debug
