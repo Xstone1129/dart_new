@@ -139,22 +139,30 @@ namespace rm_auto_light
         target_msg.yaw_error = 0;
         target_msg.is_detected = light.is_detected ? 1 : 0;
         // std::cout << static_cast<int>(target_msg.is_detected) << std::endl;
-        // std::cout << "现在的数字是" <<number_<< std::endl;
+        std::cout << "现在的数字是" <<number_<< std::endl;
         if (number_ == static_cast<int>(NUMBER::ONE))
         {
             target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[0]) : 0;
+            cv::circle(detector_->debug_image_, cv::Point2f(cam_center_.x + compensations_[0], cam_center_.y), 5, cv::Scalar(255, 0, 255), -1);
+
+            // std::cout << "cam_center_.x: " << cam_center_.x << " "
+            //           << "light center: " << light.center_point.x << " "
+            //           << "send_yaw: " << static_cast<int>(target_msg.yaw_error) << std::endl;
         }
         else if (number_ == static_cast<int>(NUMBER::TWO))
         {
             target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[1]) : 0;
+            cv::circle(detector_->debug_image_, cv::Point2f(cam_center_.x + compensations_[1], cam_center_.y), 5, cv::Scalar(255, 0, 255), -1);
         }
         else if (number_ == static_cast<int>(NUMBER::THREE))
         {
             target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[2]) : 0;
+            cv::circle(detector_->debug_image_, cv::Point2f(cam_center_.x + compensations_[2], cam_center_.y), 5, cv::Scalar(255, 0, 255), -1);
         }
         else if (number_ == static_cast<int>(NUMBER::FOUR))
         {
             target_msg.yaw_error = light.is_detected ? (cam_center_.x - static_cast<int>(light.center_point.x) + compensations_[3]) : 0;
+            cv::circle(detector_->debug_image_, cv::Point2f(cam_center_.x + compensations_[3], cam_center_.y), 5, cv::Scalar(255, 0, 255), -1);
         }
 
         std::cout << "send yaw :" << target_msg.yaw_error << std::endl;

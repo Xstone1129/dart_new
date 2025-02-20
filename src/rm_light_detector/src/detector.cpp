@@ -108,7 +108,13 @@ namespace rm_auto_light
                 continue; // 跳过过小的轮廓
 
             cv::Rect minRect = cv::boundingRect(contour);
+            cv::Point2f light_center(0, 0);
+            float light_radius = 0;
 
+            cv::minEnclosingCircle(contour, light_center, light_radius);
+
+            double circle_area = CV_PI * light_radius * light_radius;
+            double area_ratio = area / circle_area * 100.0;
             // 确保矩形在图像范围内
             if (minRect.x < 0 || minRect.y < 0 || minRect.x + minRect.width > img.cols || minRect.y + minRect.height > img.rows)
             {
@@ -126,7 +132,7 @@ namespace rm_auto_light
             cv::Mat roi = img(minRect);
             double g_confidence = calculateGreenConfidence(img, contour);
 
-            if (g_confidence > highest_confidence ) // 确保绿色是主导色并且置信度最高
+            if (g_confidence > highest_confidence) // 确保绿色是主导色并且置信度最高
             {
                 best_light.g_confidence = g_confidence;
                 best_light.box = minRect;
@@ -150,7 +156,6 @@ namespace rm_auto_light
     void Detector::drawLight(const Light &light)
     {
         // cv::rectangle(debug_image_, light.box, cv::Scalar(0, 0, 255), -1); // 绿色矩形框
-        cv::circle(debug_image_, cv::Point(640,512), 5, cv::Scalar(255, 0, 255),-1);
         cv::circle(debug_image_, light.center_point, 5, cv::Scalar(0, 0, 255), -1); // 红色圆点
 
         std::string score_text = "Score: " + std::to_string(light.g_confidence);
