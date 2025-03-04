@@ -130,9 +130,10 @@ namespace rm_auto_light
 
             // 提取ROI并计算绿色置信度
             cv::Mat roi = img(minRect);
-            double g_confidence = calculateGreenConfidence(img, contour);
+            // std::cout<<"1111"<<std::endl;
+            double g_confidence = calculateGreenConfidence(img, contour)*100;
 
-            if (g_confidence > highest_confidence) // 确保绿色是主导色并且置信度最高
+            if (g_confidence > highest_confidence&&g_confidence>=40.0) // 确保绿色是主导色并且置信度最高
             {
                 best_light.g_confidence = g_confidence;
                 best_light.box = minRect;
@@ -140,13 +141,14 @@ namespace rm_auto_light
                 cv::Point2f center;
                 cv::Moments moments = cv::moments(contour);
                 center = cv::Point2f(moments.m10 / moments.m00, moments.m01 / moments.m00);
-                best_light.center_point = (minRect.tl() + minRect.br()) * 0.5;
+                // best_light.center_point = (minRect.tl() + minRect.br()) * 0.5;
                 best_light.center_point = center;
                 highest_confidence = g_confidence;
                 best_light.is_detected = true; // 标记为已检测到光源
             }
         }
 
+        std::cout<<"best_light.g_confidence: "<<best_light.g_confidence<<std::endl;
         // 如果需要可视化，调用绘制函数
         drawLight(best_light);
 
