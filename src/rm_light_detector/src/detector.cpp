@@ -69,14 +69,16 @@ namespace rm_auto_light
     // 检测函数
     GreenLight Detector::detect(const cv::Mat &input)
     {
+        GreenLight green_light;
         lights_.clear();
         green_lights_.clear();
         // armors_.clear();armors每一个回合会重赋值 不用清空
         debug_image_ = input;
         binary_img_ = preprocessImage(input);
+        green_light = findGreenLight(input, binary_img_);
         armors_ = matchLights(lights_);
         drawResults(debug_image_);
-        return findGreenLight(input, binary_img_);
+        return green_light;
     }
 
     // 计算给定区域的绿色置信度
@@ -100,8 +102,9 @@ namespace rm_auto_light
         double avg_b = sum_b / num_points;
 
 
-        return 
-        (avg_r >= avg_b && avg_r >= avg_g) ? std::make_pair(RED, avg_r): (avg_b >= avg_g)? std::make_pair(BLUE, avg_b): std::make_pair(GREEN, avg_g);
+        return (avg_r >= avg_b && avg_r >= avg_g) ? std::make_pair(RED, avg_r)
+            : (avg_b >= avg_g)                    ? std::make_pair(BLUE, avg_b)
+                                                  : std::make_pair(GREEN, avg_g);
     }
 
     GreenLight Detector::findGreenLight(const cv::Mat &img, const cv::Mat &binary_image)
@@ -125,6 +128,7 @@ namespace rm_auto_light
 
             if (isLight(light))
             {
+                // std::cout << "111111111111" << std::endl;
                 auto color_confidence = findColor(img, contour);
                 if (color_confidence.first != GREEN)
                 {
@@ -207,6 +211,7 @@ namespace rm_auto_light
         {
             for (auto light_2 = light_1 + 1; light_2 != lights.end(); light_2++)
             {
+                // std::cout << "detect_color" << detect_color << std::endl;
                 if (light_1->color != detect_color || light_2->color != detect_color)
                     continue;
 
@@ -225,6 +230,7 @@ namespace rm_auto_light
             }
         }
 
+        // std::cout << "armors.size(): " << armors.size() << std::endl;
         return armors;
     }
 
@@ -261,8 +267,14 @@ namespace rm_auto_light
         // Angle of light center connection
         cv::Point2f diff = light_1.center - light_2.center;
         float angle = std::abs(std::atan(diff.y / diff.x)) / CV_PI * 180;
+        // std::cout<<"a_.max_angle: "<<a_.max_angle<<std::endl;
         bool angle_ok = angle < a_.max_angle;
+        // bool angle_ok = true;
 
+        // std::cout<<"angle: "<<angle<<std::endl;
+        // std::cout << "light_ratio_ok: " << light_ratio_ok << std::endl;
+        // std::cout << "center_distance_ok: " << center_distance_ok << std::endl;
+        // std::cout << "angle_ok: " << angle_ok << std::endl;
         bool is_armor = light_ratio_ok && center_distance_ok && angle_ok;
 
         // Judge armor type
@@ -305,6 +317,7 @@ namespace rm_auto_light
             cv::circle(img, light.bottom, 3, cv::Scalar(255, 255, 255), 1);
             auto line_color = light.color == RED ? cv::Scalar(255, 255, 0) : cv::Scalar(255, 0, 255);
             cv::line(img, light.top, light.bottom, line_color, 1);
+            // std::cout<<"light.top: "<<light.top<<std::endl;
         }
 
         // Draw armors

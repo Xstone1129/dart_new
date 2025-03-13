@@ -93,6 +93,8 @@ namespace rm_auto_light
             .max_small_center_distance = declare_parameter("armor.max_small_center_distance", 3.2),
             .min_large_center_distance = declare_parameter("armor.min_large_center_distance", 3.2),
             .max_large_center_distance = declare_parameter("armor.max_large_center_distance", 5.5),
+            .max_angle = declare_parameter("armor.max_angle", 35.0),
+
         };
 
 
